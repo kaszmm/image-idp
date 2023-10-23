@@ -128,6 +128,13 @@ namespace ImageGallery.Client.Controllers
             return RedirectToAction("Index");
         }
 
+        // the middleware checks the user's roles,
+        // it looks at the claims of the ClaimsPrincipal (i.e., User).
+        // It specifically searches for claims where the claim type matches the RoleClaimType that you've set up
+        // (in your case, it's "role" as you set in TokenValidationParameters).
+        // If it finds a matching claim with the value "PayingUser", access is granted.
+        // ex: Roles = "PaidUser, HybridUser"
+        [Authorize(Roles = "PaidUser")]
         public IActionResult AddImage()
         {
             return View();
@@ -135,6 +142,7 @@ namespace ImageGallery.Client.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "PaidUser")]
         public async Task<IActionResult> AddImage(AddImageViewModel addImageViewModel)
         {
             if (!ModelState.IsValid)

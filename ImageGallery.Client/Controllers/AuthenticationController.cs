@@ -25,4 +25,10 @@ public class AuthenticationController : Controller
         HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
         return;
     }
+
+    [Authorize]
+    public IActionResult AccessDenied()
+    {
+        return View();
+    }
 }

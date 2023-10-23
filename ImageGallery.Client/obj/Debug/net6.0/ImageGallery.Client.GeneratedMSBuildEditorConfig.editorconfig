@@ -16,6 +16,10 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = /home/qasimn/Personal-Stuff/image-idp/ImageGallery.Client
 build_property._RazorSourceGeneratorDebug = 
 
+[/home/qasimn/Personal-Stuff/image-idp/ImageGallery.Client/Views/Authentication/AccessDenied.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQXV0aGVudGljYXRpb24vQWNjZXNzRGVuaWVkLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [/home/qasimn/Personal-Stuff/image-idp/ImageGallery.Client/Views/Gallery/AddImage.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvR2FsbGVyeS9BZGRJbWFnZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 

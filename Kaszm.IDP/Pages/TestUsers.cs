@@ -1,11 +1,8 @@
 // Copyright (c) Duende Software. All rights reserved.
 // See LICENSE in the project root for license information.
 
-
 using IdentityModel;
 using System.Security.Claims;
-using System.Text.Json;
-using Duende.IdentityServer;
 using Duende.IdentityServer.Test;
 
 namespace IdentityServer;
@@ -26,13 +23,21 @@ public class TestUsers
                 
             return new List<TestUser>
             {
-                new TestUser
+                new()
                 {
                     SubjectId = "b7539694-97e7-4dfe-84da-b4256e1ff5c7",
                     Username = "Emma",
-                    Password = "password"
+                    Password = "password",
+                    Claims =
+                    {
+                        new Claim(JwtClaimTypes.Name, "Emma Smith"),
+                        new Claim(JwtClaimTypes.GivenName, "Emma"),
+                        new Claim(JwtClaimTypes.FamilyName, "Smith"),
+                        new Claim(JwtClaimTypes.Email, "emma@mailinator.com"),
+                        new Claim(JwtClaimTypes.Role, "FreeUser")
+                    }
                 },
-                new TestUser
+                new()
                 {
                     SubjectId = "d860efca-22d9-47fd-8249-791ba61b07c7",
                     Username = "David",
@@ -43,6 +48,7 @@ public class TestUsers
                         new Claim(JwtClaimTypes.GivenName, "David"),
                         new Claim(JwtClaimTypes.FamilyName, "Smith"),
                         new Claim(JwtClaimTypes.Email, "davidsmith@mailinator.com"),
+                        new Claim(JwtClaimTypes.Role, "PaidUser")
                     }
                 }
             };

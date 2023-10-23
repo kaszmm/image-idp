@@ -15,6 +15,10 @@ public static class Config
             // this is the required scope the add the subjectId into identity token (WTF?)
             new IdentityResources.OpenId(),
             new IdentityResources.Profile(),
+            new("roles", "Role for user", new[]
+            {
+                "role"
+            })
         };
 
     public static IEnumerable<ApiScope> ApiScopes =>
@@ -25,7 +29,7 @@ public static class Config
     public static IEnumerable<Client> Clients =>
         new Client[]
         {
-            new Client()
+            new ()
             {
                 ClientName = "Image Gallery Client",
                 ClientId = "imageGalleryClient",
@@ -45,7 +49,8 @@ public static class Config
                 {
                     // this scope is required for oidc flow
                     IdentityServerConstants.StandardScopes.OpenId,
-                    IdentityServerConstants.StandardScopes.Profile
+                    IdentityServerConstants.StandardScopes.Profile,
+                    "roles"
                 },
                 PostLogoutRedirectUris =
                 {

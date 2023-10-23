@@ -1,0 +1,12 @@
+/home/qasimn/Personal-Stuff/image-idp/ImageGallery.Model/bin/Debug/net6.0/ImageGallery.Model.deps.json
+/home/qasimn/Personal-Stuff/image-idp/ImageGallery.Model/bin/Debug/net6.0/ImageGallery.Model.dll
+/home/qasimn/Personal-Stuff/image-idp/ImageGallery.Model/bin/Debug/net6.0/ImageGallery.Model.pdb
+/home/qasimn/Personal-Stuff/image-idp/ImageGallery.Model/obj/Debug/net6.0/ImageGallery.Model.csproj.AssemblyReference.cache
+/home/qasimn/Personal-Stuff/image-idp/ImageGallery.Model/obj/Debug/net6.0/ImageGallery.Model.GeneratedMSBuildEditorConfig.editorconfig
+/home/qasimn/Personal-Stuff/image-idp/ImageGallery.Model/obj/Debug/net6.0/ImageGallery.Model.AssemblyInfoInputs.cache
+/home/qasimn/Personal-Stuff/image-idp/ImageGallery.Model/obj/Debug/net6.0/ImageGallery.Model.AssemblyInfo.cs
+/home/qasimn/Personal-Stuff/image-idp/ImageGallery.Model/obj/Debug/net6.0/ImageGallery.Model.csproj.CoreCompileInputs.cache
+/home/qasimn/Personal-Stuff/image-idp/ImageGallery.Model/obj/Debug/net6.0/ImageGallery.Model.dll
+/home/qasimn/Personal-Stuff/image-idp/ImageGallery.Model/obj/Debug/net6.0/refint/ImageGallery.Model.dll
+/home/qasimn/Personal-Stuff/image-idp/ImageGallery.Model/obj/Debug/net6.0/ImageGallery.Model.pdb
+/home/qasimn/Personal-Stuff/image-idp/ImageGallery.Model/obj/Debug/net6.0/ref/ImageGallery.Model.dll

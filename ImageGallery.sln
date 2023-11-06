@@ -11,6 +11,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageGallery.Model", "Image
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kaszm.IDP", "Kaszm.IDP\Kaszm.IDP.csproj", "{7BB53A8B-52CF-4E65-BADB-390831BB4C7B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExternalResources", "ExternalResources", "{B17B6C07-B36B-4037-B4BA-F0058E6963A7}"
+	ProjectSection(SolutionItems) = preProject
+		Information.md = Information.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

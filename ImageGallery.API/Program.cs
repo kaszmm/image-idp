@@ -1,6 +1,9 @@
+using System.IdentityModel.Tokens.Jwt;
 using ImageGallery.API.DbContexts;
 using ImageGallery.API.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +24,25 @@ builder.Services.AddScoped<IGalleryRepository, GalleryRepository>();
 // register AutoMapper-related services
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+// clear the default claim mappings, same we did in client project
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+// this service is used by image gallery api to validate the access token, when client tries to
+// access the api with bearer token, this will validate the token is whether correct or not
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.Authority = "https://fakeidp.qapitacorp.local";
+        options.Audience = "imageGalleryApi";
+        options.TokenValidationParameters = new TokenValidationParameters()
+        {
+            // providing same claim type mappings we provided in client project
+            NameClaimType = "given_name",
+            RoleClaimType = "role",
+            ValidTypes = new[] { "at+jwt" }
+        };
+    });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -28,6 +50,8 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

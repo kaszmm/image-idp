@@ -57,3 +57,10 @@
 /home/qasimn/Personal-Stuff/image-idp/ImageGallery.API/obj/Debug/net6.0/ImageGallery.API.pdb
 /home/qasimn/Personal-Stuff/image-idp/ImageGallery.API/obj/Debug/net6.0/ImageGallery.API.genruntimeconfig.cache
 /home/qasimn/Personal-Stuff/image-idp/ImageGallery.API/obj/Debug/net6.0/ref/ImageGallery.API.dll
+/home/qasimn/Personal-Stuff/image-idp/ImageGallery.API/bin/Debug/net6.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
+/home/qasimn/Personal-Stuff/image-idp/ImageGallery.API/bin/Debug/net6.0/Microsoft.IdentityModel.JsonWebTokens.dll
+/home/qasimn/Personal-Stuff/image-idp/ImageGallery.API/bin/Debug/net6.0/Microsoft.IdentityModel.Logging.dll
+/home/qasimn/Personal-Stuff/image-idp/ImageGallery.API/bin/Debug/net6.0/Microsoft.IdentityModel.Protocols.dll
+/home/qasimn/Personal-Stuff/image-idp/ImageGallery.API/bin/Debug/net6.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+/home/qasimn/Personal-Stuff/image-idp/ImageGallery.API/bin/Debug/net6.0/Microsoft.IdentityModel.Tokens.dll
+/home/qasimn/Personal-Stuff/image-idp/ImageGallery.API/bin/Debug/net6.0/System.IdentityModel.Tokens.Jwt.dll

@@ -39,3 +39,5 @@
 /home/qasimn/Personal-Stuff/image-idp/ImageGallery.Client/bin/Debug/net6.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 /home/qasimn/Personal-Stuff/image-idp/ImageGallery.Client/bin/Debug/net6.0/Microsoft.IdentityModel.Tokens.dll
 /home/qasimn/Personal-Stuff/image-idp/ImageGallery.Client/bin/Debug/net6.0/System.IdentityModel.Tokens.Jwt.dll
+/home/qasimn/Personal-Stuff/image-idp/ImageGallery.Client/bin/Debug/net6.0/IdentityModel.dll
+/home/qasimn/Personal-Stuff/image-idp/ImageGallery.Client/bin/Debug/net6.0/IdentityModel.AspNetCore.dll

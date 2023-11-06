@@ -192,6 +192,9 @@ namespace ImageGallery.Client.Controllers
 
         public async Task LogLoggedInUserData()
         {
+            var accessToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
+            _logger.LogInformation("Access token : {accessToken}", accessToken);
+
             var idToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.IdToken);
             var userClaims = new StringBuilder();
             foreach (var claim in User.Claims)

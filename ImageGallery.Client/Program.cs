@@ -19,13 +19,16 @@ builder.Services.AddControllersWithViews()
 // will map claims with what idp provides us
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
+
+builder.Services.AddAccessTokenManagement();
+
 // create an HttpClient used for accessing the API
 builder.Services.AddHttpClient("APIClient", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ImageGalleryAPIRoot"]);
     client.DefaultRequestHeaders.Clear();
     client.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
-});
+}).AddUserAccessTokenHandler(); // this service adds the access token in authorization header on each http request
 
 builder.Services.AddCors(options =>
 {
@@ -77,6 +80,7 @@ builder.Services.AddAuthentication(options =>
         // options.Scope.Add("openid");
         // options.Scope.Add("profile");
         options.Scope.Add("roles");
+        options.Scope.Add("imageGalleryApi.FullAccess");
 
         // once user get authenticate in idp, the idp will redirect user back to this uri
         // here the middleware will intercept the request and gets the code and use it to exchange it with access token
@@ -107,7 +111,7 @@ builder.Services.AddAuthentication(options =>
         // cause by default the .net sets Role claim to be : "http://schemas.microsoft.com/ws/2008/06/identity/claims/role" and not "role"
         // so we need to manually tell .net to map RoleClaim with "role", same goes for Name claim as well
         
-        // TLDR: TokenValidationParameters dictate which claims in the token should be treated as the user's name and role(s), respectively
+        // TL;DR: TokenValidationParameters dictate which claims in the token should be treated as the user's name and role(s), respectively
         options.TokenValidationParameters = new TokenValidationParameters
         {
             NameClaimType = "given_name",
@@ -121,7 +125,7 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto |
                                ForwardedHeaders.XForwardedHost;
-    
+
     // this basically tells the asp.net to not limit or restrict to certain known networks and proxies,
     // and trust all forward headers and proxies
     options.KnownNetworks.Clear();
@@ -147,7 +151,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 
-// this allow that all the different domain request dont get blocked why cors, accessing api domain from client 
+// this allow that all the different domain request dont get blocked by cors, like accessing api domain from client 
 app.UseCors("AllowAllOrigins");
 
 app.UseAuthentication();

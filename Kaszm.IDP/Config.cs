@@ -21,9 +21,37 @@ public static class Config
             })
         };
 
+    /// <summary>
+    /// Scope represents the scope of action requested by client,
+    /// whether it can be read scope, write scope etc..
+    /// </summary>
     public static IEnumerable<ApiScope> ApiScopes =>
         new ApiScope[]
         {
+            new("imageGalleryApi.View", "View only access for imageGalleryApi"),
+            
+            // when client requests for 'imageGalleryApi.FullAccess' the access token will have 'imageGalleryApi.FullAccess' scope
+            // under scopes list and resource ('imageGalleryApi') linked to this scope under aud list
+            new("imageGalleryApi.FullAccess", "Full access for imageGalleryApi")
+        }; 
+    
+    /// <summary>
+    /// Resource represents either the physical or logical resource (like single API or multiple API's)
+    /// Resources will have scope in them
+    /// eg: imageApi is an resource and it scope will be imageApi.read, imageApi.write etc..
+    /// </summary>
+    public static IEnumerable<ApiResource> ApiResources =>
+        new ApiResource[]
+        {
+            // we defined a 'imageGalleryApi' resource and we linked this resource with scope 'imageGalleryApi.FullAccess'
+            new("imageGalleryApi", "Image Gallery Api",
+                    new[]
+                    {
+                        JwtClaimTypes.Role 
+                    }) // defining user claims means when access token is generated the 'role' claim type will be added in it
+                {
+                    Scopes = new List<string> { "imageGalleryApi.FullAccess" }
+                }
         };
 
     public static IEnumerable<Client> Clients =>
@@ -50,7 +78,8 @@ public static class Config
                     // this scope is required for oidc flow
                     IdentityServerConstants.StandardScopes.OpenId,
                     IdentityServerConstants.StandardScopes.Profile,
-                    "roles"
+                    "roles",
+                    "imageGalleryApi.FullAccess"
                 },
                 PostLogoutRedirectUris =
                 {

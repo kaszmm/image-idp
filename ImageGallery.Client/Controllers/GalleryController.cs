@@ -134,7 +134,7 @@ namespace ImageGallery.Client.Controllers
         // (in your case, it's "role" as you set in TokenValidationParameters).
         // If it finds a matching claim with the value "PayingUser", access is granted.
         // ex: Roles = "PaidUser, HybridUser"
-        [Authorize(Roles = "PaidUser")]
+        [Authorize(Policy = "IndianPaidUserCanAddImage")]
         public IActionResult AddImage()
         {
             return View();
@@ -142,7 +142,7 @@ namespace ImageGallery.Client.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "PaidUser")]
+        [Authorize(Policy = "IndianPaidUserCanAddImage")]
         public async Task<IActionResult> AddImage(AddImageViewModel addImageViewModel)
         {
             if (!ModelState.IsValid)

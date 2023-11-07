@@ -178,6 +178,16 @@
           }
         }
       },
+      "ImageGallery.Authorization/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "compile": {
+          "bin/placeholder/ImageGallery.Authorization.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ImageGallery.Authorization.dll": {}
+        }
+      },
       "ImageGallery.Model/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
@@ -496,6 +506,11 @@
         "version.txt"
       ]
     },
+    "ImageGallery.Authorization/1.0.0": {
+      "type": "project",
+      "path": "../ImageGallery.Authorization/ImageGallery.Authorization.csproj",
+      "msbuildProject": "../ImageGallery.Authorization/ImageGallery.Authorization.csproj"
+    },
     "ImageGallery.Model/1.0.0": {
       "type": "project",
       "path": "../ImageGallery.Model/ImageGallery.Model.csproj",
@@ -505,6 +520,7 @@
   "projectFileDependencyGroups": {
     "net6.0": [
       "IdentityModel.AspNetCore >= 4.3.0",
+      "ImageGallery.Authorization >= 1.0.0",
       "ImageGallery.Model >= 1.0.0",
       "Microsoft.AspNetCore.Authentication.OpenIdConnect >= 6.0.23"
     ]
@@ -536,6 +552,9 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
+            "/home/qasimn/Personal-Stuff/image-idp/ImageGallery.Authorization/ImageGallery.Authorization.csproj": {
+              "projectPath": "/home/qasimn/Personal-Stuff/image-idp/ImageGallery.Authorization/ImageGallery.Authorization.csproj"
+            },
             "/home/qasimn/Personal-Stuff/image-idp/ImageGallery.Model/ImageGallery.Model.csproj": {
               "projectPath": "/home/qasimn/Personal-Stuff/image-idp/ImageGallery.Model/ImageGallery.Model.csproj"
             }

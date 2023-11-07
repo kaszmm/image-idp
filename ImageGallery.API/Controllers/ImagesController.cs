@@ -87,10 +87,10 @@ namespace ImageGallery.API.Controllers
             var webRootPath = _hostingEnvironment.WebRootPath;
 
             // create the filename
-            string fileName = Guid.NewGuid().ToString() + ".jpg";
+            var fileName = Guid.NewGuid() + ".jpg";
             
             // the full file path
-            var filePath = Path.Combine($"{webRootPath}/images/{fileName}");
+            var filePath = Path.Combine($"{webRootPath}/Images/{fileName}");
 
             // write bytes and auto-close stream
             await System.IO.File.WriteAllBytesAsync(filePath, imageForCreation.Bytes);

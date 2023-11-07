@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "MG+5pKie3sfzNw0nvhx+fLoMJKIGQpJtfl12EUGnF0I=",
+  "Hash": "FsJBxk7GDOQkucyWjXtpRGE4vBsvpNvSCN/aqCl1BMU=",
   "Source": "ImageGallery.API",
   "BasePath": "_content/ImageGallery.API",
   "Mode": "Default",
@@ -66,6 +66,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/Images/46194927-ccda-432f-bc95-4820318c08c7.JPG"
+    },
+    {
+      "Identity": "/home/qasimn/Personal-Stuff/image-idp/ImageGallery.API/wwwroot/Images/49b178a3-b509-4c96-a6c9-bf1771123f86.jpg",
+      "SourceId": "ImageGallery.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "/home/qasimn/Personal-Stuff/image-idp/ImageGallery.API/wwwroot/",
+      "BasePath": "_content/ImageGallery.API",
+      "RelativePath": "Images/49b178a3-b509-4c96-a6c9-bf1771123f86.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/Images/49b178a3-b509-4c96-a6c9-bf1771123f86.jpg"
     },
     {
       "Identity": "/home/qasimn/Personal-Stuff/image-idp/ImageGallery.API/wwwroot/Images/4cdd494c-e6e1-4af1-9e54-24a8e80ea2b4.JPG",
@@ -185,6 +202,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/Images/b2894002-0b7c-4f05-896a-856283012c87.jpg"
+    },
+    {
+      "Identity": "/home/qasimn/Personal-Stuff/image-idp/ImageGallery.API/wwwroot/Images/c96d73d5-aca9-4c06-b5ff-5339cac781f3.jpg",
+      "SourceId": "ImageGallery.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "/home/qasimn/Personal-Stuff/image-idp/ImageGallery.API/wwwroot/",
+      "BasePath": "_content/ImageGallery.API",
+      "RelativePath": "Images/c96d73d5-aca9-4c06-b5ff-5339cac781f3.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/Images/c96d73d5-aca9-4c06-b5ff-5339cac781f3.jpg"
     },
     {
       "Identity": "/home/qasimn/Personal-Stuff/image-idp/ImageGallery.API/wwwroot/Images/cc412f08-2a7b-4225-b659-07fdb168302d.JPG",

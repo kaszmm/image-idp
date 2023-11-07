@@ -18,7 +18,8 @@ public static class Config
             new("roles", "Role for user", new[]
             {
                 "role"
-            })
+            }),
+            new("country", "Country in which user lives", new[] { "country" })
         };
 
     /// <summary>
@@ -79,7 +80,8 @@ public static class Config
                     IdentityServerConstants.StandardScopes.OpenId,
                     IdentityServerConstants.StandardScopes.Profile,
                     "roles",
-                    "imageGalleryApi.FullAccess"
+                    "imageGalleryApi.FullAccess",
+                    "country"
                 },
                 PostLogoutRedirectUris =
                 {

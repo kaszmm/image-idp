@@ -41,3 +41,5 @@
 /home/qasimn/Personal-Stuff/image-idp/ImageGallery.Client/bin/Debug/net6.0/System.IdentityModel.Tokens.Jwt.dll
 /home/qasimn/Personal-Stuff/image-idp/ImageGallery.Client/bin/Debug/net6.0/IdentityModel.dll
 /home/qasimn/Personal-Stuff/image-idp/ImageGallery.Client/bin/Debug/net6.0/IdentityModel.AspNetCore.dll
+/home/qasimn/Personal-Stuff/image-idp/ImageGallery.Client/bin/Debug/net6.0/ImageGallery.Authorization.dll
+/home/qasimn/Personal-Stuff/image-idp/ImageGallery.Client/bin/Debug/net6.0/ImageGallery.Authorization.pdb

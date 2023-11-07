@@ -34,7 +34,8 @@ public class TestUsers
                         new Claim(JwtClaimTypes.GivenName, "Emma"),
                         new Claim(JwtClaimTypes.FamilyName, "Smith"),
                         new Claim(JwtClaimTypes.Email, "emma@mailinator.com"),
-                        new Claim(JwtClaimTypes.Role, "FreeUser")
+                        new Claim(JwtClaimTypes.Role, "FreeUser"),
+                        new Claim("country", "usa")
                     }
                 },
                 new()
@@ -48,7 +49,8 @@ public class TestUsers
                         new Claim(JwtClaimTypes.GivenName, "David"),
                         new Claim(JwtClaimTypes.FamilyName, "Smith"),
                         new Claim(JwtClaimTypes.Email, "davidsmith@mailinator.com"),
-                        new Claim(JwtClaimTypes.Role, "PaidUser")
+                        new Claim(JwtClaimTypes.Role, "PaidUser"),
+                        new Claim("country", "ind")
                     }
                 }
             };

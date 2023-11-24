@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using Authorization.Policy;
 using ImageGallery.API.DbContexts;
 using ImageGallery.API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -42,6 +43,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidTypes = new[] { "at+jwt" }
         };
     });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("IndianPaidUserCanAddImage", AuthorizationPoliciesBuilder.CanAddImage());
+});
 
 var app = builder.Build();
 

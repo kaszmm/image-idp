@@ -9,8 +9,9 @@ public static class AuthorizationPoliciesBuilder
         var policy = new AuthorizationPolicyBuilder()
             .RequireAuthenticatedUser()
             // .RequireRole("PaidUser")
-            .RequireClaim("country", "ind" ,"usa")
+            .RequireClaim("country", "ind")
             .Build();
+        
         return policy;
     }
 }

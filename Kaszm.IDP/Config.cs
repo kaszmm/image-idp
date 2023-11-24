@@ -48,7 +48,8 @@ public static class Config
             new("imageGalleryApi", "Image Gallery Api",
                     new[]
                     {
-                        JwtClaimTypes.Role 
+                        JwtClaimTypes.Role ,
+                        "country"
                     }) // defining user claims means when access token is generated the 'role' claim type will be added in it
                 {
                     Scopes = new List<string> { "imageGalleryApi.FullAccess" }

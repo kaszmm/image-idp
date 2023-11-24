@@ -65,7 +65,7 @@ namespace ImageGallery.API.Controllers
         }
 
         [HttpPost()]
-        [Authorize(Roles = "PaidUser")]
+        [Authorize(Policy = "IndianPaidUserCanAddImage")]
         public async Task<ActionResult<Image>> CreateImage([FromBody] ImageForCreation imageForCreation)
         {
 

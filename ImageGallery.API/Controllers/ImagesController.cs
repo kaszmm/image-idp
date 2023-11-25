@@ -15,6 +15,7 @@ namespace ImageGallery.API.Controllers
         private readonly IGalleryRepository _galleryRepository;
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly IMapper _mapper;
+        private readonly IMapper _mapper1;
 
         public ImagesController(
             IGalleryRepository galleryRepository,
@@ -32,6 +33,7 @@ namespace ImageGallery.API.Controllers
         [HttpGet()]
         public async Task<ActionResult<IEnumerable<Image>>> GetImages()
         {
+            Console.WriteLine("Inside the get images method call");
             var ownerId = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
 
             if (string.IsNullOrWhiteSpace(ownerId))
@@ -50,6 +52,7 @@ namespace ImageGallery.API.Controllers
         }
 
         [HttpGet("{id}", Name = "GetImage")]
+        [Authorize(Policy = "MustOwnImage")]
         public async Task<ActionResult<Image>> GetImage(Guid id)
         {          
             var imageFromRepo = await _galleryRepository.GetImageAsync(id);
@@ -65,10 +68,14 @@ namespace ImageGallery.API.Controllers
         }
 
         [HttpPost()]
-        [Authorize(Policy = "IndianPaidUserCanAddImage")]
+        // [Authorize(Policy = "PaidUserCanAddImage")]
+        [Authorize(Policy = "PaidUserCanRead")]
+        [Authorize(Policy = "PaidUserCanWrite")]
+        [Authorize(Policy = "MustOwnImage")]
         public async Task<ActionResult<Image>> CreateImage([FromBody] ImageForCreation imageForCreation)
         {
-
+            Console.WriteLine("Inside the add images method call");
+    
             var ownerId = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
 
             if (string.IsNullOrWhiteSpace(ownerId))
@@ -90,8 +97,14 @@ namespace ImageGallery.API.Controllers
             var fileName = Guid.NewGuid() + ".jpg";
             
             // the full file path
-            var filePath = Path.Combine($"{webRootPath}/Images/{fileName}");
+            var folderPath = $"{webRootPath}/Images";
+            var filePath = Path.Combine(folderPath, $"{fileName}");
 
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+            
             // write bytes and auto-close stream
             await System.IO.File.WriteAllBytesAsync(filePath, imageForCreation.Bytes);
 
@@ -118,6 +131,7 @@ namespace ImageGallery.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = "MustOwnImage")]
         public async Task<IActionResult> DeleteImage(Guid id)
         {            
             var imageFromRepo = await _galleryRepository.GetImageAsync(id);
@@ -135,6 +149,7 @@ namespace ImageGallery.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Policy = "MustOwnImage")]
         public async Task<IActionResult> UpdateImage(Guid id, 
             [FromBody] ImageForUpdate imageForUpdate)
         {

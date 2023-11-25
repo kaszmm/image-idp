@@ -22,7 +22,7 @@ internal static class HostingExtensions
             .AddTestUsers(TestUsers.Users);
 
         // this setting is required for oidc flow redirection from idp to client
-        // if we added reverse proxy for client this setting will ensure that new domain is what the direction will happen on
+        // if we added reverse proxy for client this setting will ensure that new domain is what the redirection will happen on
         // still confused? (ask to chat gpt, or remove and check yourself u dumb ass!)
         builder.Services.Configure<ForwardedHeadersOptions>(options =>
         {

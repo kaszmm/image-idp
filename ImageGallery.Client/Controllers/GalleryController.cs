@@ -122,7 +122,7 @@ namespace ImageGallery.Client.Controllers
 
             var response = await httpClient.SendAsync(
                 request, HttpCompletionOption.ResponseHeadersRead);
-
+            
             response.EnsureSuccessStatusCode();
 
             return RedirectToAction("Index");
@@ -134,7 +134,7 @@ namespace ImageGallery.Client.Controllers
         // (in your case, it's "role" as you set in TokenValidationParameters).
         // If it finds a matching claim with the value "PayingUser", access is granted.
         // ex: Roles = "PaidUser, HybridUser"
-        [Authorize(Policy = "IndianPaidUserCanAddImage")]
+        [Authorize(Policy = "PaidUserCanAddImage")]
         public IActionResult AddImage()
         {
             return View();
@@ -142,7 +142,7 @@ namespace ImageGallery.Client.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Policy = "IndianPaidUserCanAddImage")]
+        [Authorize(Policy = "PaidUserCanAddImage")]
         public async Task<IActionResult> AddImage(AddImageViewModel addImageViewModel)
         {
             if (!ModelState.IsValid)
@@ -196,13 +196,16 @@ namespace ImageGallery.Client.Controllers
             _logger.LogInformation("Access token : {accessToken}", accessToken);
 
             var idToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.IdToken);
+            _logger.LogInformation("Id token : {idToken}", idToken);
+
+            var refreshToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.RefreshToken);
+            _logger.LogInformation("Refresh token : {refreshToken}", refreshToken);
+
             var userClaims = new StringBuilder();
             foreach (var claim in User.Claims)
             {
                 userClaims.Append($"Type: {claim.Type} and Value: {claim.Value}\n");
             }
-
-            _logger.LogInformation("Id token : {idToken} \n Claims: {claims}", idToken, userClaims);
         }
     }
 }

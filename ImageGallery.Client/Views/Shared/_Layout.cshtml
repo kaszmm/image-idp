@@ -1,7 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Authorization
 @inject IAuthorizationService AuthorizationService;
 @{
-    var isUserAllowedToAddImage = (await AuthorizationService.AuthorizeAsync(User, "IndianPaidUserCanAddImage")).Succeeded;
+    // NOTE: in case of policy with wrong name provided, will get InvalidOperationException saying "No policy found"
+    var isUserAllowedToAddImage = (await AuthorizationService.AuthorizeAsync(User, "PaidUserCanAddImage")).Succeeded;
 }
 <!DOCTYPE html>
 <html lang="en">

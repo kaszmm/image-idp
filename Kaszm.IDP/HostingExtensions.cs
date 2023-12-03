@@ -1,4 +1,12 @@
+using AutoMapper;
+using IdentityServer.Infrastructure;
+using IdentityServer.Infrastructure.Repositories;
+using IdentityServer.Models;
+using IdentityServer.Services;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.Options;
+using MongoDB.Bson.Serialization;
+using MongoDB.Driver;
 using Serilog;
 
 namespace IdentityServer;
@@ -31,8 +39,49 @@ internal static class HostingExtensions
             options.KnownNetworks.Clear();
             options.KnownProxies.Clear();
         });
+
+        builder.Services.AddScoped(
+            typeof(IMongoRepository<>), typeof(MongoRepository<>));
+
+        builder.Services.AddScoped<IUserStoreRepository, UserStoreRepository>();
+
+        builder.Services.Configure<MongoDataBaseSettings>(
+            builder.Configuration.GetSection("MongoDataBaseSettings"));
+
+        // TODO: investigate why added this code
+        builder.Services.AddSingleton<IDatabaseSettings>(sp =>
+            sp.GetRequiredService<IOptions<MongoDataBaseSettings>>().Value);
+
+        builder.Services.AddSingleton<IMongoClient>(sp =>
+            new MongoClient(sp.GetRequiredService<IDatabaseSettings>().ConnectionString));
+
+        builder.Services.AddScoped<IUserStoreService, UserStoreService>();
+
+        RegisterMongoClassMaps();
+        ConfigureAutoMapper(builder.Services);
         
         return builder.Build();
+    }
+
+    private static void RegisterMongoClassMaps()
+    {
+        if (!BsonClassMap.IsClassMapRegistered(typeof(User)))
+        {
+            BsonClassMap.RegisterClassMap<BaseEntity>(map =>
+            {
+                map.AutoMap();
+                map.MapIdField(x => x.Id);
+                map.MapIdProperty(x => x.Id);
+            });
+        }
+    }
+
+    private static void ConfigureAutoMapper(IServiceCollection service)
+    {
+        var configurations =
+            new MapperConfiguration(
+                config => config.AddMaps(typeof(IDatabaseRepository).Assembly));
+        service.AddScoped(_ => configurations.CreateMapper());
     }
     
     public static WebApplication ConfigurePipeline(this WebApplication app)

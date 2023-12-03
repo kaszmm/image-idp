@@ -1,4 +1,5 @@
 ﻿using IdentityServer;
+using IdentityServer.Services;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -19,6 +20,12 @@ try
     var app = builder
         .ConfigureServices()
         .ConfigurePipeline();
+
+    using (var scope = app.Services.CreateScope())
+    {
+        var userStoreService = scope.ServiceProvider.GetRequiredService<IUserStoreService>();
+        await SeedData.SeedUsers(userStoreService);
+    }
     
     app.Run();
 }

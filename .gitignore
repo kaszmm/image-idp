@@ -98,3 +98,6 @@ ehthumbs.db
 # ASP.NET Scaffolding
 ScaffoldingReadMe.txt
 
+# appsettings file
+appsettings.*
+

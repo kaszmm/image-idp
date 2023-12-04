@@ -14,6 +14,7 @@ public interface IMongoRepository<TModel> : IDatabaseRepository<TModel> where TM
         return Guid.NewGuid().ToString();
     }
     
+    // as this is mongo specific repo, we should name it GetRecords?
     Task<IEnumerable<TReturn>> GetRecordsAsync<TReturn>(Expression<Func<TModel, bool>> where,
         Expression<Func<TModel, TReturn>> projection);
 }
@@ -48,12 +49,11 @@ public class MongoRepository<TModel> : IMongoRepository<TModel> where TModel : B
         await _mongoCollection.InsertOneAsync(data);
     }
 
-    public async Task UpdateAsync(TModel data, Expression<Func<TModel, bool>> where)
+    public async Task UpdateAsync(TModel data)
     {
-        ArgumentNullException.ThrowIfNull(where);
         ArgumentNullException.ThrowIfNull(data);
 
-        var filterDefinition = Builders<TModel>.Filter.Where(where);
+        var filterDefinition = Builders<TModel>.Filter.Where(x => x.Id == data.Id);
         
         // generate concurrency timestamp on each operation
         data.ConcurrencyTimestamp = IMongoRepository<TModel>.GetConcurrencyTimestamp();

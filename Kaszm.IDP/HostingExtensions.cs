@@ -27,7 +27,8 @@ internal static class HostingExtensions
             .AddInMemoryApiResources(Config.ApiResources)
             .AddInMemoryApiScopes(Config.ApiScopes)
             .AddInMemoryClients(Config.Clients)
-            .AddTestUsers(TestUsers.Users);
+            .AddProfileService<UserProfileService>(); // this helps idp to get required claims from user when generating access token
+            // .AddTestUsers(TestUsers.Users); Implemented custom UserStore, so this is not required now
 
         // this setting is required for oidc flow redirection from idp to client
         // if we added reverse proxy for client this setting will ensure that new domain is what the redirection will happen on

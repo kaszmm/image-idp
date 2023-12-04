@@ -65,7 +65,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization(options =>
 {
-    Console.WriteLine("adding the auth policy");
     // options.AddPolicy("IndianPaidUserCanAddImage", AuthorizationPoliciesBuilder.CanAddImage());
     options.AddPolicy("PaidUserCanRead", policyBuilder =>
     {
@@ -83,7 +82,6 @@ builder.Services.AddAuthorization(options =>
             policyBuilder.RequireAuthenticatedUser()
                 .AddRequirements(new MustOwnImageRequirement());
         });
-    Console.WriteLine("completed adding the auth policy");
 });
 
 var app = builder.Build();

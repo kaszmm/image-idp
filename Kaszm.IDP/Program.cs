@@ -21,8 +21,10 @@ try
         .ConfigureServices()
         .ConfigurePipeline();
 
-    using (var scope = app.Services.CreateScope())
+    // seed data only when particular args passed
+    if (args.Contains("seed-data"))
     {
+        using var scope = app.Services.CreateScope();
         var userStoreService = scope.ServiceProvider.GetRequiredService<IUserStoreService>();
         await SeedData.SeedUsers(userStoreService);
     }

@@ -18,7 +18,6 @@ public class MustOwnImageHandler : AuthorizationHandler<MustOwnImageRequirement>
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
         MustOwnImageRequirement requirement)
     {
-        Console.WriteLine("inside requirement handler");
         var imageId = _httpContextAccessor.HttpContext?.GetRouteValue("id")?.ToString();
         if (!Guid.TryParse(imageId, out var imageGuid) && !string.IsNullOrWhiteSpace(imageId))
         {
@@ -45,6 +44,5 @@ public class MustOwnImageHandler : AuthorizationHandler<MustOwnImageRequirement>
 
         context.Succeed(requirement);
         Console.WriteLine("requirement handler succeeded");
-        return;
     }
 }

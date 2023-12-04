@@ -6,14 +6,15 @@ namespace IdentityServer.Services;
 
 public interface IUserStoreService
 {
-    Task<Guid> CreatUser(UserDto user);
+    Task<Guid> CreatUserAsync(UserDto user);
 
-    Task<bool> ValidateCredentialsAsync(string userEmail, string password);
+    Task<bool> ValidateCredentialsAsync(string userName, string password);
 
-    Task<UserDto> GetUserByUserEmail(string userEmail);
-    
-    Task<IEnumerable<UserClaimDto>> GetUserClaims(Guid userId);
+    Task<UserDto> GetUserByUserNameAsync(string userName);
 
+    Task<IEnumerable<UserClaimDto>> GetUserClaimsAsync(string userId);
+
+    Task<bool> IsActiveUserAsync(string userId);
 }
 
 public class UserStoreService : IUserStoreService
@@ -27,7 +28,7 @@ public class UserStoreService : IUserStoreService
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Guid> CreatUser(UserDto user)
+    public async Task<Guid> CreatUserAsync(UserDto user)
     {
         if (string.IsNullOrWhiteSpace(user.Email))
         {
@@ -55,47 +56,53 @@ public class UserStoreService : IUserStoreService
         {
             UserName = user.Email
         };
-        
+
         var domainUser = _mapper.Map<User>(user);
         await _userStoreRepository.CreateAsync(domainUser);
         return domainUser.Id;
     }
 
-    public async Task<bool> ValidateCredentialsAsync(string userEmail, string password)
+    public async Task<bool> ValidateCredentialsAsync(string userName, string password)
     {
-        if (string.IsNullOrWhiteSpace(userEmail))
+        if (string.IsNullOrWhiteSpace(userName))
         {
-            throw new ArgumentException("value is required", nameof(userEmail));
+            throw new ArgumentException("value is required", nameof(userName));
         }
-        
+
         if (string.IsNullOrWhiteSpace(password))
         {
             throw new ArgumentException("value is required", nameof(password));
         }
 
         var user =
-            await _userStoreRepository.GetAsync(u => u.Email == userEmail && 
-                                                     u.Password == password);
+            await _userStoreRepository.GetAsync(filter =>
+                filter.UserName == userName && filter.Password == password &&
+                filter.IsActive);
         return user != null;
     }
 
-    public async Task<UserDto> GetUserByUserEmail(string userEmail)
+    public async Task<UserDto> GetUserByUserNameAsync(string userName)
     {
-        if (string.IsNullOrWhiteSpace(userEmail))
+        if (string.IsNullOrWhiteSpace(userName))
         {
-            throw new ArgumentException("value is required", nameof(userEmail));
+            throw new ArgumentException("value is required", nameof(userName));
         }
 
         var user =
-            await _userStoreRepository.GetAsync(u => u.Email == userEmail);
+            await _userStoreRepository.GetAsync(u => u.UserName == userName);
 
         return _mapper.Map<UserDto>(user);
     }
 
-    public async Task<IEnumerable<UserClaimDto>> GetUserClaims(Guid userId)
+    public async Task<IEnumerable<UserClaimDto>> GetUserClaimsAsync(string userId)
     {
+        if (!Guid.TryParse(userId, out var guidUserId))
+        {
+            return new List<UserClaimDto>();
+        }
+        
         var user =
-            await _userStoreRepository.GetAsync(u => u.Id == userId);
+            await _userStoreRepository.GetUserAsync(guidUserId);
 
         if (user is null)
         {
@@ -103,5 +110,18 @@ public class UserStoreService : IUserStoreService
         }
 
         return _mapper.Map<IEnumerable<UserClaimDto>>(user.UserClaims);
+    }
+
+    public async Task<bool> IsActiveUserAsync(string userId)
+    {
+        if (!Guid.TryParse(userId, out var guidUserId))
+        {
+            return false;
+        }
+        
+        var user =
+            await _userStoreRepository.GetUserAsync(guidUserId);
+        
+        return user != null;
     }
 }

@@ -97,10 +97,10 @@ public static class Config
                 // AbsoluteRefreshTokenLifetime = {{value in seconds}} 
                 
                 // enabling it true updates the claims in refresh token whenever the claims in access token is updated
-                
                 UpdateAccessTokenClaimsOnRefresh = true,
-                AllowedGrantTypes =
-                    GrantTypes.Code, // this restricts client to only initiate oidc flows for authenticating and authorization
+                
+                // this restricts client to only initiate oidc flows for authenticating and authorization
+                AllowedGrantTypes = GrantTypes.Code, 
                 RedirectUris =
                 {
                     // on this uri the idp will send authorization code, that client will later use to exchange it with access token

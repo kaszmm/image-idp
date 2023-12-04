@@ -1,3 +1,4 @@
+using IdentityModel;
 using IdentityServer.Models;
 using IdentityServer.Services;
 
@@ -8,17 +9,33 @@ public class SeedData
     public static async Task SeedUsers(IUserStoreService userStoreService)
     {
         Guid createdUserId;
-        createdUserId = await userStoreService.CreatUser(
+        createdUserId = await userStoreService.CreatUserAsync(
             new UserDto("", "Kasim", "Nala",
                 "password", "kasim@mail.com",
-                "admin", new[] { new UserClaimDto("role", "admin") }));
+                "admin", new[]
+                {
+                    new UserClaimDto("role", "admin"),
+                    new UserClaimDto("country", "ind"),
+                    new UserClaimDto(JwtClaimTypes.Name, "Kasim Nala"),
+                    new UserClaimDto(JwtClaimTypes.GivenName, "Kasim"),
+                    new UserClaimDto(JwtClaimTypes.FamilyName, "Nalawala"),
+                    new UserClaimDto(JwtClaimTypes.Email, "kasim@mail.com"),
+                }));
 
         Console.WriteLine($"Created user with Id :{createdUserId}");
 
-        createdUserId = await userStoreService.CreatUser(
+        createdUserId = await userStoreService.CreatUserAsync(
             new UserDto("", "Naama", "Dhundhiya",
                 "password", "naama@mail.com",
-                "employee", new[] { new UserClaimDto("role", "employee") }));
+                "employee", new[]
+                {
+                    new UserClaimDto("role", "employee"),
+                    new UserClaimDto("country", "uae"),
+                    new UserClaimDto(JwtClaimTypes.Name, "Naama Dhundhiya"),
+                    new UserClaimDto(JwtClaimTypes.GivenName, "Naama"),
+                    new UserClaimDto(JwtClaimTypes.FamilyName, "Dhundhiya"),
+                    new UserClaimDto(JwtClaimTypes.Email, "naama@mail.com"),
+                }));
 
         Console.WriteLine($"Created user with Id :{createdUserId}");
     }

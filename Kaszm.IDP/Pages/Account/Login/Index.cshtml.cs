@@ -92,7 +92,7 @@ public class Index : PageModel
             // validate username/password against in-memory store
             if (await _userStoreService.ValidateCredentialsAsync(Input.Username, Input.Password))
             {
-                var user = await _userStoreService.GetUserByUserEmail(Input.Username);
+                var user = await _userStoreService.GetUserByUserNameAsync(Input.Username);
                 await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id.ToString("D") , user.FirstName, clientId: context?.Client.ClientId));
 
                 // only set explicit expiration here if user chooses "remember me". 

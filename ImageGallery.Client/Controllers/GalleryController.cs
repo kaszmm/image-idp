@@ -206,6 +206,8 @@ namespace ImageGallery.Client.Controllers
             {
                 userClaims.Append($"Type: {claim.Type} and Value: {claim.Value}\n");
             }
+            
+            _logger.LogInformation("The user claims are {claims}", userClaims);
         }
     }
 }

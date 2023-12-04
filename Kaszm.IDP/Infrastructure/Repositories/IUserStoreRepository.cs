@@ -6,6 +6,12 @@ namespace IdentityServer.Infrastructure.Repositories;
 public interface IUserStoreRepository : IMongoRepository<User>
 {
     Task DeleteAsync(Guid userId);
+    
+    /// <summary>
+    /// Returns the active user based on userId passed
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
     Task<User> GetUserAsync(Guid userId);
 }
 

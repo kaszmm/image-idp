@@ -71,7 +71,7 @@ namespace ImageGallery.API.Controllers
         // [Authorize(Policy = "PaidUserCanAddImage")]
         [Authorize(Policy = "PaidUserCanRead")]
         [Authorize(Policy = "PaidUserCanWrite")]
-        [Authorize(Policy = "MustOwnImage")]
+        // [Authorize(Policy = "MustOwnImage")]
         public async Task<ActionResult<Image>> CreateImage([FromBody] ImageForCreation imageForCreation)
         {
             Console.WriteLine("Inside the add images method call");

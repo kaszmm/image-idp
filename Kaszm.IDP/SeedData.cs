@@ -8,11 +8,10 @@ public class SeedData
 {
     public static async Task SeedUsers(IUserStoreService userStoreService)
     {
-        Guid createdUserId;
-        createdUserId = await userStoreService.CreatUserAsync(
+        var createdUser = await userStoreService.CreatUserAsync(
             new UserDto("", "Kasim", "Nala",
                 "password", "kasim@mail.com",
-                "admin", new[]
+                true, default,default,"admin", new[]
                 {
                     new UserClaimDto("role", "admin"),
                     new UserClaimDto("country", "ind"),
@@ -22,11 +21,12 @@ public class SeedData
                     new UserClaimDto(JwtClaimTypes.Email, "kasim@mail.com"),
                 }));
 
-        Console.WriteLine($"Created user with Id :{createdUserId}");
+        Console.WriteLine($"Created user with Id :{createdUser.Id}");
 
-        createdUserId = await userStoreService.CreatUserAsync(
+        createdUser = await userStoreService.CreatUserAsync(
             new UserDto("", "Naama", "Dhundhiya",
-                "password", "naama@mail.com",
+                "password", "naama@mail.com", true,
+                default,default,
                 "employee", new[]
                 {
                     new UserClaimDto("role", "employee"),
@@ -37,6 +37,6 @@ public class SeedData
                     new UserClaimDto(JwtClaimTypes.Email, "naama@mail.com"),
                 }));
 
-        Console.WriteLine($"Created user with Id :{createdUserId}");
+        Console.WriteLine($"Created user with Id :{createdUser.Id}");
     }
 }

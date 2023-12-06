@@ -57,3 +57,7 @@
  just id which provides the location in which the token is stored in idp server.
 - Also **reference token** reduces the overhead of encrypting ans storing the access token in client app.
 - **Reference token** takes more time to validate the access token, as it needs to request to idp on each request call.
+
+### Password Hashing
+- we are using .net inbuilt password hasher `IPasswordHasher`,
+ this hashes the password with salt and do key stretching(hashing the password multiple times) as well

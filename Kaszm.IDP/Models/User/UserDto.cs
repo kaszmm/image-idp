@@ -1,7 +1,8 @@
 namespace IdentityServer.Models;
 
 public record UserDto(string UserName, string FirstName, string LastName, string Password,
-    string Email, string Role, IEnumerable<UserClaimDto> UserClaims)
+    string Email, bool IsEmailVerified, string SecurityCode, DateTime SecurityCodeExpiration, 
+    string Role, IEnumerable<UserClaimDto> UserClaims)
 {
     public Guid Id { get; set; }
     public bool IsActive { get; set; }

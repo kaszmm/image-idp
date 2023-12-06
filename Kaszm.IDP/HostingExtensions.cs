@@ -4,6 +4,7 @@ using IdentityServer.Infrastructure.Repositories;
 using IdentityServer.Models;
 using IdentityServer.Services;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
@@ -57,6 +58,11 @@ internal static class HostingExtensions
             new MongoClient(sp.GetRequiredService<IDatabaseSettings>().ConnectionString));
 
         builder.Services.AddScoped<IUserStoreService, UserStoreService>();
+
+        // service that hashes and verifies the hashed passwords (inbuilt service provided by .net)
+        builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+        
+        builder.Services.AddScoped<IEmailService, EmailService>();
 
         RegisterMongoClassMaps();
         ConfigureAutoMapper(builder.Services);

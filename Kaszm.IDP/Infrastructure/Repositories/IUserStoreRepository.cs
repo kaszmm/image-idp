@@ -36,7 +36,6 @@ public class UserStoreRepository : MongoRepository<User>, IUserStoreRepository
             IsActive = false
         };
 
-        // check for password is encrypted or not (will it be responsibility of service?)
         await UpdateAsync(existingUser);
     }
 

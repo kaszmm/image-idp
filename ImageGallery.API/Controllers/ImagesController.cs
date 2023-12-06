@@ -67,11 +67,10 @@ namespace ImageGallery.API.Controllers
             return Ok(imageToReturn);
         }
 
-        [HttpPost()]
+        [HttpPost]
         // [Authorize(Policy = "PaidUserCanAddImage")]
         [Authorize(Policy = "PaidUserCanRead")]
         [Authorize(Policy = "PaidUserCanWrite")]
-        // [Authorize(Policy = "MustOwnImage")]
         public async Task<ActionResult<Image>> CreateImage([FromBody] ImageForCreation imageForCreation)
         {
             Console.WriteLine("Inside the add images method call");

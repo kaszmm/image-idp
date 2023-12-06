@@ -1,12 +1,18 @@
+using System.Security.Cryptography;
 using AutoMapper;
 using IdentityServer.Infrastructure.Repositories;
 using IdentityServer.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace IdentityServer.Services;
 
 public interface IUserStoreService
 {
-    Task<Guid> CreatUserAsync(UserDto user);
+    Task<UserDto> CreatUserAsync(UserDto user);
+    
+    Task UpdateUserAsync(UserDto user);
+    
+    Task<UserDto> GetUserAsync(Guid userId);
 
     Task<bool> ValidateCredentialsAsync(string userName, string password);
 
@@ -15,20 +21,25 @@ public interface IUserStoreService
     Task<IEnumerable<UserClaimDto>> GetUserClaimsAsync(string userId);
 
     Task<bool> IsActiveUserAsync(string userId);
+
+    Task<bool> VerifySecurityCode(Guid userId, string securityCode);
 }
 
 public class UserStoreService : IUserStoreService
 {
     private readonly IUserStoreRepository _userStoreRepository;
+    private readonly IPasswordHasher<User> _passwordHasher;
     private readonly IMapper _mapper;
 
-    public UserStoreService(IUserStoreRepository userStoreRepository, IMapper mapper)
+    public UserStoreService(IUserStoreRepository userStoreRepository, IMapper mapper,
+        IPasswordHasher<User> passwordHasher)
     {
         _userStoreRepository = userStoreRepository ?? throw new ArgumentNullException(nameof(userStoreRepository));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
     }
 
-    public async Task<Guid> CreatUserAsync(UserDto user)
+    public async Task<UserDto> CreatUserAsync(UserDto user)
     {
         if (string.IsNullOrWhiteSpace(user.Email))
         {
@@ -50,16 +61,37 @@ public class UserStoreService : IUserStoreService
         {
             throw new ArgumentException("User with same email already exist");
         }
-
-        // updates the userName with the email the user passed
-        user = user with
-        {
-            UserName = user.Email
-        };
-
+        
         var domainUser = _mapper.Map<User>(user);
+        
+        domainUser = domainUser with
+        {
+            IsEmailVerified = false,
+            UserName = domainUser.Email,
+            Password = _passwordHasher.HashPassword(domainUser, user.Password),
+            SecurityCode = Convert.ToBase64String(RandomNumberGenerator.GetBytes(128)),
+            SecurityCodeExpiration = DateTime.UtcNow.AddDays(1)
+        };
+        
         await _userStoreRepository.CreateAsync(domainUser);
-        return domainUser.Id;
+        return _mapper.Map<UserDto>(domainUser);
+    }
+
+    public async Task UpdateUserAsync(UserDto userDto)
+    {
+        ArgumentNullException.ThrowIfNull(userDto);
+        var userExist = await _userStoreRepository.AnyAsync(x => x.Id == userDto.Id);
+        if (!userExist)
+        {
+            throw new ArgumentException("User doesnt exist");
+        }
+        
+        await _userStoreRepository.UpdateAsync(_mapper.Map<User>(userDto));
+    }
+
+    public async Task<UserDto> GetUserAsync(Guid userId)
+    {
+        return _mapper.Map<UserDto>(await _userStoreRepository.GetUserAsync(userId));
     }
 
     public async Task<bool> ValidateCredentialsAsync(string userName, string password)
@@ -74,11 +106,17 @@ public class UserStoreService : IUserStoreService
             throw new ArgumentException("value is required", nameof(password));
         }
 
-        var user =
-            await _userStoreRepository.GetAsync(filter =>
-                filter.UserName == userName && filter.Password == password &&
-                filter.IsActive);
-        return user != null;
+        var user = await _userStoreRepository.GetAsync(x => x.UserName == userName);
+
+        if (user is null || !user.IsActive)
+        {
+            return false;
+        }
+        
+        var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(
+            user, user.Password, password);
+
+        return passwordVerificationResult == PasswordVerificationResult.Success;
     }
 
     public async Task<UserDto> GetUserByUserNameAsync(string userName)
@@ -118,10 +156,29 @@ public class UserStoreService : IUserStoreService
         {
             return false;
         }
+
+        var isUserActive =
+            await _userStoreRepository.AnyAsync(x => x.Id == guidUserId && x.IsActive);
+
+        return isUserActive;
+    }
+
+    public async Task<bool> VerifySecurityCode(Guid userId, string securityCode)
+    {
+        if (string.IsNullOrWhiteSpace(securityCode))
+        {
+            throw new ArgumentException("value is required",nameof(securityCode));
+        }
+
+        var user = await _userStoreRepository.GetUserAsync(userId);
+
+        if (user is null)
+        {
+            throw new ArgumentException("Invalid user");
+        }
         
-        var user =
-            await _userStoreRepository.GetUserAsync(guidUserId);
-        
-        return user != null;
+        var isValidSecurityCode = user.SecurityCode == securityCode && 
+                                  DateTime.UtcNow <= user.SecurityCodeExpiration;
+        return isValidSecurityCode;
     }
 }

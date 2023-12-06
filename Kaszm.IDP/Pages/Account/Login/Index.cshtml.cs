@@ -93,6 +93,15 @@ public class Index : PageModel
             if (await _userStoreService.ValidateCredentialsAsync(Input.Username, Input.Password))
             {
                 var user = await _userStoreService.GetUserByUserNameAsync(Input.Username);
+
+                if (!user.IsEmailVerified)
+                {
+                    await _events.RaiseAsync(new UserLoginFailureEvent(Input.Username, "Email is not verified", clientId:context?.Client.ClientId));
+                    ModelState.AddModelError(string.Empty, LoginOptions.EmailNotVerified);
+                    await BuildModelAsync(Input.ReturnUrl);
+                    return Page();
+                }
+                
                 await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id.ToString("D") , user.FirstName, clientId: context?.Client.ClientId));
 
                 // only set explicit expiration here if user chooses "remember me". 
@@ -105,7 +114,7 @@ public class Index : PageModel
                         IsPersistent = true,
                         ExpiresUtc = DateTimeOffset.UtcNow.Add(LoginOptions.RememberMeLoginDuration)
                     };
-                };
+                }
 
                 // issue authentication cookie with subject ID and username
                 var isuser = new IdentityServerUser(user.Id.ToString("D"))

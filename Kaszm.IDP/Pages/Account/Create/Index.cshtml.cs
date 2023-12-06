@@ -1,10 +1,8 @@
-using Duende.IdentityServer;
-using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
-using Duende.IdentityServer.Stores;
-using Duende.IdentityServer.Test;
-using Microsoft.AspNetCore.Authentication;
+using IdentityModel;
+using IdentityServer.Models;
+using IdentityServer.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -15,20 +13,20 @@ namespace IdentityServer.Pages.Create;
 [AllowAnonymous]
 public class Index : PageModel
 {
-    private readonly TestUserStore _users;
+    private readonly IUserStoreService _userStoreService;
     private readonly IIdentityServerInteractionService _interaction;
+    private readonly IEmailService _emailService;
 
     [BindProperty]
     public InputModel Input { get; set; }
         
     public Index(
-        IIdentityServerInteractionService interaction,
-        TestUserStore users = null)
+        IIdentityServerInteractionService interaction, IEmailService emailService, IUserStoreService userStoreService = null)
     {
         // this is where you would plug in your own custom identity management library (e.g. ASP.NET Identity)
-        _users = users ?? throw new Exception("Please call 'AddTestUsers(TestUsers.Users)' on the IIdentityServerBuilder in Startup or remove the TestUserStore from the AccountController.");
-            
-        _interaction = interaction;
+        _userStoreService = userStoreService ?? throw new ArgumentNullException(nameof(userStoreService));
+        _interaction = interaction ?? throw new ArgumentNullException(nameof(interaction));
+        _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
     }
 
     public IActionResult OnGet(string returnUrl)
@@ -69,50 +67,82 @@ public class Index : PageModel
             }
         }
 
-        if (_users.FindByUsername(Input.Username) != null)
+        if (await _userStoreService.GetUserByUserNameAsync(Input.Username) != null)
         {
             ModelState.AddModelError("Input.Username", "Invalid username");
         }
 
         if (ModelState.IsValid)
         {
-            var user = _users.CreateUser(Input.Username, Input.Password, Input.Name, Input.Email);
-
-            // issue authentication cookie with subject ID and username
-            var isuser = new IdentityServerUser(user.SubjectId)
+            var userClaimsDto = new List<UserClaimDto>
             {
-                DisplayName = user.Username
+                new("country", Input.Country),
+                new(JwtClaimTypes.GivenName, Input.LastName),
+                new(JwtClaimTypes.Name, Input.FirstName),
+                new(JwtClaimTypes.Email, Input.Email)
             };
+            
+            var userDto = new UserDto(Input.Username, Input.FirstName, Input.LastName,
+                Input.Password, Input.Email, default, default, 
+                default, "employee", userClaimsDto);
+            
+            var createdUser = await _userStoreService.CreatUserAsync(userDto);
 
-            await HttpContext.SignInAsync(isuser);
+            var verifyEmailLink = Url.PageLink("/account/emailVerification/verifyEmail", values: new
+            {
+                userId = createdUser.Id,
+                securityCode = createdUser.SecurityCode
+            });
+        
+            Console.WriteLine($"the verify email link {verifyEmailLink}");
 
-            if (context != null)
+            await _emailService.SendEmailAsync("kasim@mail.com", createdUser.Email, "Email verification",
+                $"To verify your email please click on this link <a href='{verifyEmailLink}'>Verify Email</a>");
+            
+            var pageLink = Url.PageLink("/account/emailVerification/index", values: new
             {
-                if (context.IsNativeClient())
-                {
-                    // The client is native, so this change in how to
-                    // return the response is for better UX for the end user.
-                    return this.LoadingPage(Input.ReturnUrl);
-                }
+                userId = createdUser.Id,
+                securityCode = createdUser.SecurityCode
+            });
+            
+            Console.WriteLine($"the generate link when creating user is {pageLink}");
 
-                // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
-                return Redirect(Input.ReturnUrl);
-            }
+            if (pageLink != null) return RedirectToPage(pageLink);
+            // issue authentication cookie with subject ID and username
+            // var isuser = new IdentityServerUser(userId.ToString("D"))
+            // {
+            //     DisplayName = userDto.UserName
+            // };
 
-            // request for a local page
-            if (Url.IsLocalUrl(Input.ReturnUrl))
-            {
-                return Redirect(Input.ReturnUrl);
-            }
-            else if (string.IsNullOrEmpty(Input.ReturnUrl))
-            {
-                return Redirect("~/");
-            }
-            else
-            {
-                // user might have clicked on a malicious link - should be logged
-                throw new Exception("invalid return URL");
-            }
+            // await HttpContext.SignInAsync(isuser);
+
+            // if (context != null)
+            // {
+            //     if (context.IsNativeClient())
+            //     {
+            //         // The client is native, so this change in how to
+            //         // return the response is for better UX for the end user.
+            //         return this.LoadingPage(Input.ReturnUrl);
+            //     }
+            //
+            //     // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
+            //     return Redirect(Input.ReturnUrl);
+            // }
+            //
+            // // request for a local page
+            // if (Url.IsLocalUrl(Input.ReturnUrl))
+            // {
+            //     return Redirect(Input.ReturnUrl);
+            // }
+            // else if (string.IsNullOrEmpty(Input.ReturnUrl))
+            // {
+            //     return Redirect("~/");
+            // }
+            // else
+            // {
+            //     // user might have clicked on a malicious link - should be logged
+            //     throw new Exception("invalid return URL");
+            // }
         }
 
         return Page();

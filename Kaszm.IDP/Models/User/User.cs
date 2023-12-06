@@ -13,5 +13,6 @@ namespace IdentityServer.Models;
 /// <param name="Role"></param>
 /// <param name="UserClaims">Claims associated to the user</param>
 [MongoCollection(name: "users")]
-public record User(string UserName, string FirstName, string LastName, string Password, string Email,
-    string Role, IEnumerable<UserClaim> UserClaims) : BaseEntity;
+public record User(string UserName, string FirstName, string LastName, 
+    string Password, string Email, bool IsEmailVerified, string SecurityCode,
+    DateTime SecurityCodeExpiration,string Role, IEnumerable<UserClaim> UserClaims) : BaseEntity;

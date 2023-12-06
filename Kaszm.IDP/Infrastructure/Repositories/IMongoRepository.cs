@@ -17,6 +17,8 @@ public interface IMongoRepository<TModel> : IDatabaseRepository<TModel> where TM
     // as this is mongo specific repo, we should name it GetRecords?
     Task<IEnumerable<TReturn>> GetRecordsAsync<TReturn>(Expression<Func<TModel, bool>> where,
         Expression<Func<TModel, TReturn>> projection);
+
+    Task<bool> AnyAsync(Expression<Func<TModel, bool>> where);
 }
 
 public class MongoRepository<TModel> : IMongoRepository<TModel> where TModel : BaseEntity
@@ -84,5 +86,13 @@ public class MongoRepository<TModel> : IMongoRepository<TModel> where TModel : B
         }
 
         return await collectionAsQueryable.Select(projection).ToListAsync();
+    }
+
+    public async Task<bool> AnyAsync(Expression<Func<TModel, bool>> where)
+    {
+        ArgumentNullException.ThrowIfNull(where);
+        
+        var collectionAsQueryable = _mongoCollection.AsQueryable();
+        return await collectionAsQueryable.AnyAsync(where);
     }
 }

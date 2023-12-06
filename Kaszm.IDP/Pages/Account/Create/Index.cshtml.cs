@@ -97,17 +97,13 @@ public class Index : PageModel
             Console.WriteLine($"the verify email link {verifyEmailLink}");
 
             await _emailService.SendEmailAsync("kasim@mail.com", createdUser.Email, "Email verification",
-                $"To verify your email please click on this link <a href='{verifyEmailLink}'>Verify Email</a>");
+                $"<html>To verify your email please click on this link <a href='{verifyEmailLink}'>Verify Email</a></html>");
             
-            var pageLink = Url.PageLink("/account/emailVerification/index", values: new
-            {
-                userId = createdUser.Id,
-                securityCode = createdUser.SecurityCode
-            });
+            var pageLink = Url.PageLink("/Account/EmailVerification/index");
             
             Console.WriteLine($"the generate link when creating user is {pageLink}");
 
-            if (pageLink != null) return RedirectToPage(pageLink);
+            if (pageLink != null) return Redirect(pageLink);
             // issue authentication cookie with subject ID and username
             // var isuser = new IdentityServerUser(userId.ToString("D"))
             // {

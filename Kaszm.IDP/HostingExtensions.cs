@@ -64,6 +64,9 @@ internal static class HostingExtensions
         
         builder.Services.AddScoped<IEmailService, EmailService>();
 
+        builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
+        builder.Services.AddScoped<ISmtpSettings>(sp => sp.GetRequiredService<IOptions<SmtpSettings>>().Value);
+        
         RegisterMongoClassMaps();
         ConfigureAutoMapper(builder.Services);
         

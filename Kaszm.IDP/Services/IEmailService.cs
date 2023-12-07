@@ -19,6 +19,7 @@ public class EmailService : IEmailService
 
     /// <summary>
     /// Mailtrap's fake smtp to simulate sending the emails
+    /// https://mailtrap.io/inboxes/2513220/messages/3892552023/text
     /// </summary>
     /// <param name="fromAddress"></param>
     /// <param name="toAddress"></param>

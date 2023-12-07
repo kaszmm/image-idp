@@ -104,6 +104,9 @@ public class Index : PageModel
             Console.WriteLine($"the generate link when creating user is {pageLink}");
 
             if (pageLink != null) return Redirect(pageLink);
+            
+            // THIS CODE WE DONT REQUIRE, as this is handled in verify email flow
+            
             // issue authentication cookie with subject ID and username
             // var isuser = new IdentityServerUser(userId.ToString("D"))
             // {

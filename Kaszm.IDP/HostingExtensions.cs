@@ -1,4 +1,5 @@
 using AutoMapper;
+using Duende.IdentityServer;
 using IdentityServer.Infrastructure;
 using IdentityServer.Infrastructure.Repositories;
 using IdentityServer.Models;
@@ -66,6 +67,15 @@ internal static class HostingExtensions
 
         builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
         builder.Services.AddScoped<ISmtpSettings>(sp => sp.GetRequiredService<IOptions<SmtpSettings>>().Value);
+
+        // external identity providers, Idp will here work as client that gets authorized to facebook's idp
+        builder.Services.AddAuthentication()
+            .AddFacebook("Facebook", options =>
+            {
+                options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+                options.ClientId = "297798405963664";
+                options.ClientSecret = "4b1a12a9986f68502d910f2f472d1bb4";
+            });
         
         RegisterMongoClassMaps();
         ConfigureAutoMapper(builder.Services);

@@ -26,7 +26,10 @@ public class UserProfileService :IProfileService
 
     public async Task IsActiveAsync(IsActiveContext context)
     {
-        var subId = context.Subject.GetSubjectId();
-        context.IsActive = await _userStoreService.IsActiveUserAsync(subId);
+        // NOTE: To allow external login like facebook we are setting the user active flag to be true for now
+        // var subId = context.Subject.GetSubjectId();
+        // context.IsActive = await _userStoreService.IsActiveUserAsync(subId);
+
+        context.IsActive = true;
     }
 }

@@ -65,16 +65,25 @@ internal static class HostingExtensions
         
         builder.Services.AddScoped<IEmailService, EmailService>();
 
-        builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
+        builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("MailTrapSmtpSettings"));
         builder.Services.AddScoped<ISmtpSettings>(sp => sp.GetRequiredService<IOptions<SmtpSettings>>().Value);
+
+        builder.Services.Configure<FacebookLoginProviderSettings>(
+            builder.Configuration.GetSection("ExternalLoginProviders:FacebookLoginSettings"));
+        builder.Services.AddScoped<IExternalLoginProviderSettings>(sp =>
+            sp.GetRequiredService<IOptions<FacebookLoginProviderSettings>>().Value);
 
         // external identity providers, Idp will here work as client that gets authorized to facebook's idp
         builder.Services.AddAuthentication()
             .AddFacebook("Facebook", options =>
             {
+                var facebookSettings = builder.Configuration
+                    .GetSection("ExternalLoginProviders:FacebookLoginSettings")
+                    .Get<FacebookLoginProviderSettings>();
+                
                 options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
-                options.ClientId = "297798405963664";
-                options.ClientSecret = "4b1a12a9986f68502d910f2f472d1bb4";
+                options.ClientId = facebookSettings.ClientId;
+                options.ClientSecret = facebookSettings.ClientSecret;
             });
         
         RegisterMongoClassMaps();

@@ -8,8 +8,9 @@ namespace IdentityServer.Services;
 /// <summary>
 /// As we implemented our own user store, while generation of access token, the idp needs a way to extract the
 /// required claims and other properties of the user, and this class helps with that
+/// IProfileService is provided by Duende itself.
 /// </summary>
-public class UserProfileService :IProfileService
+public class UserProfileService : IProfileService
 {
     private readonly IUserStoreService _userStoreService;
 
@@ -17,6 +18,7 @@ public class UserProfileService :IProfileService
     {
         _userStoreService = userStoreService ?? throw new ArgumentNullException(nameof(userStoreService));
     }
+
     public async Task GetProfileDataAsync(ProfileDataRequestContext context)
     {
         var subId = context.Subject.GetSubjectId();
@@ -26,10 +28,9 @@ public class UserProfileService :IProfileService
 
     public async Task IsActiveAsync(IsActiveContext context)
     {
-        // NOTE: To allow external login like facebook we are setting the user active flag to be true for now
-        // var subId = context.Subject.GetSubjectId();
-        // context.IsActive = await _userStoreService.IsActiveUserAsync(subId);
-
-        context.IsActive = true;
+        var subId = context.Subject.GetSubjectId();
+        
+        // if IsActive flag is false, the user will not be able to login into the application
+        context.IsActive = await _userStoreService.IsActiveUserAsync(subId);
     }
 }

@@ -9,9 +9,9 @@ public class SeedData
     public static async Task SeedUsers(IUserStoreService userStoreService)
     {
         var createdUser = await userStoreService.CreatUserAsync(
-            new UserDto("", "Kasim", "Nala",
-                "password", "kasim@mail.com",
-                true, default,default,"admin", new[]
+            new UserDto("kasimnala786@gmail.com", "Kasim", "Nala",
+                "password", "kasimnala786@gmail.com",
+                true, default, default, "admin", new[]
                 {
                     new UserClaimDto("role", "admin"),
                     new UserClaimDto("country", "ind"),
@@ -19,14 +19,14 @@ public class SeedData
                     new UserClaimDto(JwtClaimTypes.GivenName, "Kasim"),
                     new UserClaimDto(JwtClaimTypes.FamilyName, "Nalawala"),
                     new UserClaimDto(JwtClaimTypes.Email, "kasim@mail.com"),
-                }));
+                }, Array.Empty<UserLoginDto>()));
 
         Console.WriteLine($"Created user with Id :{createdUser.Id}");
 
         createdUser = await userStoreService.CreatUserAsync(
-            new UserDto("", "Naama", "Dhundhiya",
+            new UserDto("naama@mail.com", "Naama", "Dhundhiya",
                 "password", "naama@mail.com", true,
-                default,default,
+                default, default,
                 "employee", new[]
                 {
                     new UserClaimDto("role", "employee"),
@@ -35,7 +35,7 @@ public class SeedData
                     new UserClaimDto(JwtClaimTypes.GivenName, "Naama"),
                     new UserClaimDto(JwtClaimTypes.FamilyName, "Dhundhiya"),
                     new UserClaimDto(JwtClaimTypes.Email, "naama@mail.com"),
-                }));
+                }, Array.Empty<UserLoginDto>()));
 
         Console.WriteLine($"Created user with Id :{createdUser.Id}");
     }

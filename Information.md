@@ -61,3 +61,18 @@
 ### Password Hashing
 - we are using .net inbuilt password hasher `IPasswordHasher`,
  this hashes the password with salt and do key stretching(hashing the password multiple times) as well
+
+### Integrating third party identity providers
+- This allows users to login into our idp by using there already logged in account of facebook, google etc..
+- In our Idp we have integrated facebook oidc flow in which our idp works as client
+ for the facebook's idp.
+- https://developers.facebook.com/apps/297798405963664/permissions/?use_case_enum=FB_LOGIN&show_verification_toast=1
+ for setting up new apps in developers facebook page.
+
+### Federation Identity
+- It means a single identity is shared across multiple identity servers, and generally 
+ this identities have a unique key that can be used to linked them across multiple identities.
+- Read this https://www.okta.com/identity-101/what-is-federated-identity/
+
+### User Provisioning
+- It means user or Iam can provision to creating/modifying/deleting the user account.

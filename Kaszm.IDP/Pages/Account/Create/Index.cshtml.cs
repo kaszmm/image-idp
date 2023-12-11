@@ -17,11 +17,11 @@ public class Index : PageModel
     private readonly IIdentityServerInteractionService _interaction;
     private readonly IEmailService _emailService;
 
-    [BindProperty]
-    public InputModel Input { get; set; }
-        
+    [BindProperty] public InputModel Input { get; set; }
+
     public Index(
-        IIdentityServerInteractionService interaction, IEmailService emailService, IUserStoreService userStoreService = null)
+        IIdentityServerInteractionService interaction, IEmailService emailService,
+        IUserStoreService userStoreService = null)
     {
         // this is where you would plug in your own custom identity management library (e.g. ASP.NET Identity)
         _userStoreService = userStoreService ?? throw new ArgumentNullException(nameof(userStoreService));
@@ -34,7 +34,7 @@ public class Index : PageModel
         Input = new InputModel { ReturnUrl = returnUrl };
         return Page();
     }
-        
+
     public async Task<IActionResult> OnPost()
     {
         // check if we are in the context of an authorization request
@@ -81,11 +81,11 @@ public class Index : PageModel
                 new(JwtClaimTypes.Name, Input.FirstName),
                 new(JwtClaimTypes.Email, Input.Email)
             };
-            
+
             var userDto = new UserDto(Input.Username, Input.FirstName, Input.LastName,
-                Input.Password, Input.Email, default, default, 
-                default, "employee", userClaimsDto);
-            
+                Input.Password, Input.Email, default, default,
+                default, "employee", userClaimsDto, Array.Empty<UserLoginDto>());
+
             var createdUser = await _userStoreService.CreatUserAsync(userDto);
 
             var verifyEmailLink = Url.PageLink("/account/emailVerification/verifyEmail", values: new
@@ -93,22 +93,22 @@ public class Index : PageModel
                 userId = createdUser.Id,
                 securityCode = createdUser.SecurityCode
             });
-        
+
             Console.WriteLine($"the verify email link {verifyEmailLink}");
 
             await _emailService.SendEmailAsync("kasim@mail.com", createdUser.Email, "Email verification",
                 $"<html>To verify your email please click on this link <a href='{verifyEmailLink}'>Verify Email</a></html>");
-            
+
             var pageLink = Url.PageLink("/Account/EmailVerification/index");
-            
+
             Console.WriteLine($"the generate link when creating user is {pageLink}");
 
             if (pageLink != null) return Redirect(pageLink);
-            
+
             // THIS CODE WE DONT REQUIRE, as this is handled in verify email flow
-            
+
             // issue authentication cookie with subject ID and username
-            // var isuser = new IdentityServerUser(userId.ToString("D"))
+            // var isuser = new IdentitySedirect(pageLink)rverUser(userId.ToString("D"))
             // {
             //     DisplayName = userDto.UserName
             // };

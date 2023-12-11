@@ -13,6 +13,49 @@ namespace IdentityServer.Models;
 /// <param name="Role"></param>
 /// <param name="UserClaims">Claims associated to the user</param>
 [MongoCollection(name: "users")]
-public record User(string UserName, string FirstName, string LastName, 
-    string Password, string Email, bool IsEmailVerified, string SecurityCode,
-    DateTime SecurityCodeExpiration,string Role, IEnumerable<UserClaim> UserClaims) : BaseEntity;
+public record User : BaseEntity
+{
+    public string UserName { get; init; }
+    public string FirstName { get; init; }
+    public string LastName { get; init; }
+    public string Password { get; init; }
+    public string Email { get; init; }
+    public bool IsEmailVerified { get; init; }
+    public string SecurityCode { get; init; }
+    public DateTime SecurityCodeExpiration { get; init; }
+    public string Role { get; init; }
+    public IReadOnlyCollection<UserClaim> UserClaims { get; init; }
+    public IReadOnlyCollection<UserLogin> UserLogins { get; init; }
+
+    public User(
+        string userName,
+        string firstName,
+        string lastName,
+        string password,
+        string email,
+        bool isEmailVerified,
+        string securityCode,
+        DateTime securityCodeExpiration,
+        string role,
+        IReadOnlyCollection<UserClaim> userClaims,
+        IReadOnlyCollection<UserLogin> userLogins)
+    {
+        ValidationUtility.NotNullOrWhitespace(userName);
+        // ValidationUtility.NotNullOrWhitespace(firstName);
+        // ValidationUtility.NotNullOrWhitespace(password);
+        ValidationUtility.NotNullOrWhitespace(email);
+        ValidationUtility.NotNullOrWhitespace(role);
+
+        UserName = userName;
+        FirstName = firstName;
+        LastName = lastName;
+        Password = password;
+        Email = email;
+        IsEmailVerified = isEmailVerified;
+        SecurityCode = securityCode;
+        SecurityCodeExpiration = securityCodeExpiration;
+        Role = role;
+        UserClaims = userClaims;
+        UserLogins = userLogins;
+    }
+}

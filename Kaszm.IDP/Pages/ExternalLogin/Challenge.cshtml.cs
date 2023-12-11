@@ -17,6 +17,13 @@ public class Challenge : PageModel
         _interactionService = interactionService;
     }
         
+    /// <summary>
+    /// This initiates the challenge based on the authorization scheme, on completion on challenge user gets redirected to <see cref="Callback"/>
+    /// </summary>
+    /// <param name="scheme"></param>
+    /// <param name="returnUrl"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
     public IActionResult OnGet(string scheme, string returnUrl)
     {
         if (string.IsNullOrEmpty(returnUrl)) returnUrl = "~/";

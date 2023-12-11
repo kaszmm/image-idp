@@ -42,6 +42,11 @@ public class Callback : PageModel
         _externalLoginProviderSettings = externalLoginProviderSettings;
     }
         
+    /// <summary>
+    /// It handles the user's information received from the external provider and manages the local sign-in process. 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
     public async Task<IActionResult> OnGet()
     {
         // read external identity from the temporary cookie

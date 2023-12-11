@@ -193,24 +193,26 @@ public class UserStoreService : IUserStoreService
         ArgumentNullException.ThrowIfNull(userClaims);
         ArgumentNullException.ThrowIfNull(userLogin);
 
-        var existingUserWithEmail = await _userStoreRepository.GetAsync(u => u.Email == email);
-        if (existingUserWithEmail != null)
+        // if user already exist in system, just link them
+        var user = await _userStoreRepository.GetAsync(u => u.Email == email);
+        if (user != null)
         {
-            var updatedUserLogin = existingUserWithEmail.UserLogins.ToList();
+            var updatedUserLogin = user.UserLogins.ToList();
 
             if (updatedUserLogin.TrueForAll(l => l.Provider != userLogin.Provider))
             {
                 updatedUserLogin.Add(_mapper.Map<UserLogin>(userLogin));
-                existingUserWithEmail = existingUserWithEmail with
+                user = user with
                 {
                     UserLogins = updatedUserLogin
                 };
-                await _userStoreRepository.UpdateAsync(existingUserWithEmail);
+                await _userStoreRepository.UpdateAsync(user);
             }
         }
         else
         {
-
+            // if user doesnt exist in system, provision a new user for them
+            
             var userRoleClaim = userClaims.FirstOrDefault(x => x.Type == JwtClaimTypes.Role);
 
             if (userRoleClaim is null)
@@ -225,7 +227,7 @@ public class UserStoreService : IUserStoreService
                 throw new InvalidOperationException("user given name claim is required");
             }
 
-            var user = new User(email, givenNameClaim.Value,
+            var domainUser = new User(email, givenNameClaim.Value,
                 "", "",
                 email, false,
                 Convert.ToBase64String(RandomNumberGenerator.GetBytes(128)),
@@ -237,11 +239,11 @@ public class UserStoreService : IUserStoreService
                     _mapper.Map<UserLogin>(userLogin)
                 });
 
-            await _userStoreRepository.CreateAsync(user);
+            await _userStoreRepository.CreateAsync(domainUser);
 
-            existingUserWithEmail = user;
+            user = domainUser;
         }
 
-        return _mapper.Map<UserDto>(existingUserWithEmail);
+        return _mapper.Map<UserDto>(user);
     }
 }

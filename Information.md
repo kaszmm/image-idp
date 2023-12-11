@@ -76,3 +76,13 @@
 
 ### User Provisioning
 - It means user or Iam can provision to creating/modifying/deleting the user account.
+
+### Some definitions
+- `IIdentityServerInteractionService`: This service is used by IdentityServer to interact with its protocol layer.
+    It allows you to get information about the current authorization request, 
+    consent requests, and to deal with login and consent responses.
+-  `IAuthenticationSchemeProvider`: This service in ASP.NET Core is used to retrieve the list of registered
+    authentication schemes (like local login, Facebook, Google, etc.).
+    It helps to dynamically load the list of available external providers configured in the system.
+- `IIdentityProviderStore`: This is an IdentityServer service that allows for dynamically 
+   enabling/disabling identity providers (external login providers like Facebook).

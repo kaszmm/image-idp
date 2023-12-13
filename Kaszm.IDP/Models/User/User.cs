@@ -21,9 +21,16 @@ public record User : BaseEntity
     public string Password { get; init; }
     public string Email { get; init; }
     public bool IsEmailVerified { get; init; }
+    
+    // For Email verification
     public string SecurityCode { get; init; }
     public DateTime SecurityCodeExpiration { get; init; }
+    
     public string Role { get; init; }
+    
+    public bool TwoFAEnabled { get; init; }
+    
+    public string AuthenticatorCode { get; init; }
     public IReadOnlyCollection<UserClaim> UserClaims { get; init; }
     public IReadOnlyCollection<UserLogin> UserLogins { get; init; }
 
@@ -38,11 +45,13 @@ public record User : BaseEntity
         DateTime securityCodeExpiration,
         string role,
         IReadOnlyCollection<UserClaim> userClaims,
-        IReadOnlyCollection<UserLogin> userLogins)
+        IReadOnlyCollection<UserLogin> userLogins,
+        bool twoFAEnabled = false,
+        string authenticatorCode = null)
     {
         ValidationUtility.NotNullOrWhitespace(userName);
-        // ValidationUtility.NotNullOrWhitespace(firstName);
-        // ValidationUtility.NotNullOrWhitespace(password);
+        ValidationUtility.NotNullOrWhitespace(firstName);
+        // ValidationUtility.NotNullOrWhitespace(password); // for federated users( user with third party logged in, they dont have any password
         ValidationUtility.NotNullOrWhitespace(email);
         ValidationUtility.NotNullOrWhitespace(role);
 
@@ -57,5 +66,7 @@ public record User : BaseEntity
         Role = role;
         UserClaims = userClaims;
         UserLogins = userLogins;
+        TwoFAEnabled = twoFAEnabled;
+        AuthenticatorCode = authenticatorCode;
     }
 }

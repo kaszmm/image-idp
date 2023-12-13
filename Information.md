@@ -86,3 +86,7 @@
     It helps to dynamically load the list of available external providers configured in the system.
 - `IIdentityProviderStore`: This is an IdentityServer service that allows for dynamically 
    enabling/disabling identity providers (external login providers like Facebook).
+
+### MFA
+- The TOPT(Time based One Time Password) have a format of `otpauth://totp/{issuer}:{label | userName}?secret={secretKeyBase32}&issuer={issuer}"`
+ that is being used by most authenticator apps.

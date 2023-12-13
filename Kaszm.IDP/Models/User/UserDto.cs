@@ -11,7 +11,9 @@ public record UserDto(
     DateTime SecurityCodeExpiration,
     string Role,
     IEnumerable<UserClaimDto> UserClaims,
-    IReadOnlyCollection<UserLoginDto> UserLogins)
+    IReadOnlyCollection<UserLoginDto> UserLogins,
+    bool TwoFAEnabled = false,
+    string AuthenticatorCode = null)
 {
     
     // properties that are good to have but not mandatory on each obj initialization

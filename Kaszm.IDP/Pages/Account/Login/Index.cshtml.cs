@@ -89,7 +89,6 @@ public class Index : PageModel
 
         if (ModelState.IsValid)
         {
-            // validate username/password against in-memory store
             if (await _userStoreService.ValidateCredentialsAsync(Input.Username, Input.Password))
             {
                 var user = await _userStoreService.GetUserByUserNameAsync(Input.Username);
@@ -102,8 +101,9 @@ public class Index : PageModel
                     return Page();
                 }
                 
-                await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id.ToString("D") , user.FirstName, clientId: context?.Client.ClientId));
-
+                await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id.ToString("D"), user.FirstName,
+                    clientId: context?.Client.ClientId));
+                
                 // only set explicit expiration here if user chooses "remember me". 
                 // otherwise we rely upon expiration configured in cookie middleware.
                 AuthenticationProperties props = null;
@@ -123,7 +123,12 @@ public class Index : PageModel
                 };
 
                 await HttpContext.SignInAsync(isuser, props);
-
+                
+                if (user.TwoFAEnabled)
+                {
+                    return RedirectToPage("/Account/MFA/Verify", new { Input.ReturnUrl });
+                }
+                
                 if (context != null)
                 {
                     if (context.IsNativeClient())

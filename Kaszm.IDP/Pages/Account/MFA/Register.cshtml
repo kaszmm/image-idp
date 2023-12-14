@@ -3,8 +3,21 @@
 
 <h2 style="text-align: center;">Register the MFA by scanning the qr code or manually entering the code in to your authenticator app</h2>
 <div style="border: black;">
-
-    <h3 style="display: flex;justify-content: center;">QR Code</h3>
-    <img src="@($"data:image/png;base64,{Model.Input.QrImage}")" class="img-fluid rounded mx-auto d-block" width="250" height="250" alt="@Model.Input.AuthenticatorCode"/>
-    <p class="text-center q-color">@Model.Input.AuthenticatorCode</p>
+    <form asp-page="/Account/MFA/Register">
+        <input type="hidden" asp-for="Input.ReturnUrl"/>
+        <input type="hidden" asp-for="Input.AuthenticatorCode"/>
+        <h3 style="display: flex;justify-content: center;">QR Code</h3>
+        <img src="@($"data:image/png;base64,{Model.Input.QrImage}")" class="img-fluid rounded mx-auto d-block" width="250" height="250" alt="@Model.Input.AuthenticatorCode"/>
+        <p class="text-center q-color">@Model.Input.AuthenticatorCode</p>
+        <input asp-for="Input.VerificationCode" placeholder="Enter Verification Code" class="form-control"/>
+        <button class="btn btn-primary" name="Input.Button" value="save">Save</button>
+        <button class="btn btn-secondary" name="Input.Button" value="cancel">Cancel</button>
+    </form>
 </div>
+
+@if (!string.IsNullOrWhiteSpace(Model.Input.Message))
+{
+    <p>Error: @Model.Input.Message</p>
+}
+
+<p>@Model.Input.ReturnUrl</p>

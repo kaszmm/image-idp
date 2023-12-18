@@ -86,6 +86,14 @@ internal static class HostingExtensions
                 options.ClientSecret = facebookSettings.ClientSecret;
             });
         
+        // Adding the sessions for using to save userId across multiple redirect calls(MFA)
+        builder.Services.AddSession(options =>
+        {
+            options.IdleTimeout = TimeSpan.FromMinutes(30); // Set a short timeout for easy testing.
+            options.Cookie.HttpOnly = true;
+            options.Cookie.IsEssential = true;
+        });
+        
         RegisterMongoClassMaps();
         ConfigureAutoMapper(builder.Services);
         
@@ -133,6 +141,8 @@ internal static class HostingExtensions
         app.UseStaticFiles();
         app.UseRouting();
             
+        app.UseSession();
+
         app.UseIdentityServer(); // UseAuthentication call is included inside this call, so its not requited to add UseAuthentication() in pipeline
 
         // uncomment if you want to add a UI

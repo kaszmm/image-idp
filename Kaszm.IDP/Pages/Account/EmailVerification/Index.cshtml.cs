@@ -7,7 +7,7 @@ namespace IdentityServer.Pages.Account.EmailVerification;
 [AllowAnonymous]
 public class Index : PageModel
 {
-    public async Task<IActionResult> OnGet()
+    public IActionResult OnGet()
     {
         return Page();
     }

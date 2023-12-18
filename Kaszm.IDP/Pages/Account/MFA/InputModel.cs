@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
-
 namespace IdentityServer.Pages.Account.MFA;
 
 public class InputModel

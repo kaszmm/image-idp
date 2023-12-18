@@ -3,6 +3,7 @@ using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
 using Duende.IdentityServer.Stores;
+using IdentityModel;
 using IdentityServer.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -101,9 +102,6 @@ public class Index : PageModel
                     return Page();
                 }
                 
-                await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id.ToString("D"), user.FirstName,
-                    clientId: context?.Client.ClientId));
-                
                 // only set explicit expiration here if user chooses "remember me". 
                 // otherwise we rely upon expiration configured in cookie middleware.
                 AuthenticationProperties props = null;
@@ -115,7 +113,22 @@ public class Index : PageModel
                         ExpiresUtc = DateTimeOffset.UtcNow.Add(LoginOptions.RememberMeLoginDuration)
                     };
                 }
-
+                
+                if (user.TwoFAEnabled)
+                {
+                    if (string.IsNullOrWhiteSpace(user.AuthenticatorCode))
+                    {
+                        ModelState.AddModelError(string.Empty, "Two factor authentication is enabled but not authenticator code founded");
+                        return Page();
+                    }
+                    HttpContext.Session.SetString(JwtClaimTypes.Subject, user.Id.ToString());
+                    HttpContext.Session.SetString("RememberLogin", Input.RememberLogin.ToString());
+                    return RedirectToPage("/Account/MFA/Verify", new { Input.ReturnUrl});
+                }
+                
+                await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id.ToString("D"), user.FirstName,
+                    clientId: context?.Client.ClientId));
+                
                 // issue authentication cookie with subject ID and username
                 var isuser = new IdentityServerUser(user.Id.ToString("D"))
                 {
@@ -123,11 +136,6 @@ public class Index : PageModel
                 };
 
                 await HttpContext.SignInAsync(isuser, props);
-                
-                if (user.TwoFAEnabled)
-                {
-                    return RedirectToPage("/Account/MFA/Verify", new { Input.ReturnUrl });
-                }
                 
                 if (context != null)
                 {

@@ -1,11 +1,16 @@
-using Duende.IdentityServer.Extensions;
+using Duende.IdentityServer;
+using IdentityModel;
+using IdentityServer.Pages.Login;
 using IdentityServer.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using OtpNet;
 
 namespace IdentityServer.Pages.Account.MFA;
 
+[AllowAnonymous] // not securing the endpoint, as 2FA is enabled we need to first verify code before we log in user
 public class VerifyMfa : PageModel
 {
     private readonly IUserStoreService _userStoreService;
@@ -20,11 +25,6 @@ public class VerifyMfa : PageModel
     
     public IActionResult OnGet(string returnUrl)
     {
-        if (!User.IsAuthenticated())
-        {
-            return RedirectToPage("/Account/Login/Index", new { returnUrl });
-        }
-        
         Input = new InputModel()
         {
             ReturnUrl = returnUrl
@@ -35,43 +35,74 @@ public class VerifyMfa : PageModel
 
     public async Task<IActionResult> OnPost()
     {
-        if (Guid.TryParse(User.Identity.GetSubjectId(), out var userId))
+        var userId = HttpContext.Session.GetString(JwtClaimTypes.Subject);
+
+        if (!Guid.TryParse(userId, out var guidUserId))
         {
-            var user = await _userStoreService.GetUserAsync(userId);
-            var authenticatorCode = user.AuthenticatorCode;
+            return RedirectToPage("/Account/Login/Index", new { Input.ReturnUrl });
+        }
+        
+        var user = await _userStoreService.GetUserAsync(guidUserId);
 
-            if (string.IsNullOrWhiteSpace(authenticatorCode))
+        if (user is null)
+        {
+            return RedirectToPage("/Account/Login/Index", new { Input.ReturnUrl });
+        }
+
+        var authenticatorCode = user.AuthenticatorCode;
+
+        if (string.IsNullOrWhiteSpace(authenticatorCode))
+        {
+            return RedirectToPage("/Account/MFA/Register", new { Input.ReturnUrl });
+        }
+
+        var isVerificationCodeValid = ValidateVerificationCode(authenticatorCode, Input.VerificationCode);
+        if (isVerificationCodeValid)
+        {
+            bool.TryParse(HttpContext.Session.GetString("RememberMe"), out var rememberMe);
+            
+            // clearing out the session as it is no longer required
+            HttpContext.Session.Clear();
+            
+            AuthenticationProperties props = null;
+            if (LoginOptions.AllowRememberLogin && rememberMe)
             {
-                return RedirectToPage("/Account/MFA/Register", new { Input.ReturnUrl });
+                props = new AuthenticationProperties
+                {
+                    IsPersistent = true,
+                    ExpiresUtc = DateTimeOffset.UtcNow.Add(LoginOptions.RememberMeLoginDuration)
+                };
             }
-
-            var isVerificationCodeValid = ValidateVerificationCode(authenticatorCode, Input.VerificationCode);
-            if (isVerificationCodeValid)
+            
+            // issue authentication cookie with subject ID and username
+            var isuser = new IdentityServerUser(user.Id.ToString("D"))
             {
-                if (!string.IsNullOrWhiteSpace(Input.ReturnUrl))
-                {
-                    return Redirect(Input.ReturnUrl);
-                }
-                else
-                {
-                    // redirect to home if no returnUrl provided
-                    return Redirect("~/");
-                }
+                DisplayName = user.UserName
+            };
+
+            await HttpContext.SignInAsync(isuser, props);
+
+            if (!string.IsNullOrWhiteSpace(Input.ReturnUrl))
+            {
+                return Redirect(Input.ReturnUrl);
             }
             else
             {
-                Input = new InputModel()
-                {
-                    ReturnUrl = Input.ReturnUrl
-                };
-                
-                ModelState.AddModelError(nameof(Input.AuthenticatorCode), "Invalid verification code");
-
-                return Page();
+                // redirect to home if no returnUrl provided
+                return Redirect("~/");
             }
         }
+        else
+        {
+            Input = new InputModel()
+            {
+                ReturnUrl = Input.ReturnUrl
+            };
 
-        return Page();
+            ModelState.AddModelError(nameof(Input.AuthenticatorCode), "Invalid verification code");
+
+            return Page();
+        }
     }
     
     public bool ValidateVerificationCode(string authenticatorCode, string verificationCode)

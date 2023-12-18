@@ -1,5 +1,6 @@
 using Duende.IdentityServer.Extensions;
 using IdentityServer.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using OtpNet;
@@ -7,6 +8,8 @@ using QRCoder;
 
 namespace IdentityServer.Pages.Account.MFA;
 
+[SecurityHeaders]
+[Authorize]
 public class Register : PageModel
 {
     private readonly IUserStoreService _userStoreService;
